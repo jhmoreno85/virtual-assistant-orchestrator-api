@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: "jdbc:h2:mem:test"
+    username: "change-it"
+    password: "change-it"
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+
+wdc:
+  assistant:
+    endpoint: "https://api.us-south.assistant.watson.cloud.ibm.com"
+    version: "2021-06-14"
+    alternate-intents: true
+    workspace-id: "change-it"
+    api-key: "change-it"
+    retries: 3
+    delay: 1500
+
+app:
+  security:
+    basic:
+      enabled: false
