@@ -11,6 +11,7 @@ import com.va.orchestrator.api.model.sendmessage.Context;
 import com.va.orchestrator.api.model.sendmessage.SendMessageRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class ContextUtil {
   private static final int COMMUNICATION_CONTEXT_CHANNEL_CAPACITY = 2;
   private static final String TRANSACTION_CONTEXT_OPERATION_PATH =
       "transaction_context.request.operation";
+  private static final String REGEX_ARRAY_BRACKETS = "^\\[\\d+]?";
 
   private ContextUtil() {
     throw new IllegalStateException("Context Util class");
@@ -54,14 +56,21 @@ public class ContextUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static Object getTargetObjectFromMap(
-      Map<String, Object> map, String[] targetPath, int currIndex) {
-    if (map.containsKey(targetPath[currIndex])) {
-      if (currIndex == targetPath.length - 1) {
-        return map.get(targetPath[currIndex]);
-      } else {
-        return getTargetObjectFromMap(
-            (Map<String, Object>) map.get(targetPath[currIndex]), targetPath, currIndex + 1);
+  private static Object getTargetObjectFromMap(Object object, String[] targetPath, int currIndex) {
+    if (object instanceof Map) {
+      Map<String, Object> map = (Map<String, Object>) object;
+      if (map.containsKey(targetPath[currIndex])) {
+        return currIndex == targetPath.length - 1
+            ? map.get(targetPath[currIndex])
+            : getTargetObjectFromMap(map.get(targetPath[currIndex]), targetPath, currIndex + 1);
+      }
+    } else if (object instanceof List && targetPath[currIndex].matches(REGEX_ARRAY_BRACKETS)) {
+      List<Object> list = (List<Object>) object;
+      int elementIndex = Integer.parseInt(targetPath[currIndex].substring(1, targetPath[currIndex].length() - 1));
+      if (elementIndex < list.size()) {
+        return currIndex == targetPath.length - 1
+                ? list.get(elementIndex)
+                : getTargetObjectFromMap(list.get(elementIndex), targetPath, currIndex + 1);
       }
     }
     return null;
