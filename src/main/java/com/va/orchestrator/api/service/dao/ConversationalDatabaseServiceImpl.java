@@ -24,7 +24,9 @@ import static com.va.orchestrator.api.common.Constants.LIMIT_INTENTS;
 import static com.va.orchestrator.api.util.ContextUtil.jsonStringToMap;
 import static com.va.orchestrator.api.util.ContextUtil.mapToJsonString;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Slf4j
 @Service
 public class ConversationalDatabaseServiceImpl implements ConversationalDatabaseService {

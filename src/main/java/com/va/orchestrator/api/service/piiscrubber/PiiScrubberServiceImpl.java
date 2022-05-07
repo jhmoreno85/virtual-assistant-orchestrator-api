@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PiiScrubberServiceImpl implements PiiScrubberService {
 
-    @Override
-    public String sanitizeInputText(String inputText) throws ApplicationException {
-        log.info("Sanitizing input text, inputText={}", inputText);
-        return inputText;
-    }
+  @Override
+  public String sanitizeInputText(String inputText) throws ApplicationException {
+    log.info("Sanitizing input text, inputText={}", inputText);
+    return inputText;
+  }
 }

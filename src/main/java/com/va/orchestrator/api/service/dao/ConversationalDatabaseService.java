@@ -5,7 +5,9 @@ import com.va.orchestrator.api.exception.BadRequestException;
 
 import java.util.Map;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public interface ConversationalDatabaseService {
   void saveOrUpdateContext(MessageResponse messageResponse);
 

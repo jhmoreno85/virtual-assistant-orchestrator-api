@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Slf4j
 @Component
 public class FooOperation implements Operation {

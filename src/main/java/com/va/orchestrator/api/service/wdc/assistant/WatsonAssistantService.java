@@ -6,7 +6,9 @@ import com.va.orchestrator.api.exception.ApplicationException;
 
 import java.util.Map;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public interface WatsonAssistantService {
   MessageResponse message(String conversationId, Map<String, Object> context, String text)
       throws ApplicationException;

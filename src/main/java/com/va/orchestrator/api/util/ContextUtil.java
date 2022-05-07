@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public class ContextUtil {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -58,48 +60,49 @@ public class ContextUtil {
       if (currIndex == targetPath.length - 1) {
         return map.get(targetPath[currIndex]);
       } else {
-        return getTargetObjectFromMap((Map<String, Object>) map.get(targetPath[currIndex]), targetPath, currIndex + 1);
+        return getTargetObjectFromMap(
+            (Map<String, Object>) map.get(targetPath[currIndex]), targetPath, currIndex + 1);
       }
     }
     return null;
   }
 
   public static void populateCommunicationContext(
-          Map<String, Object> context, SendMessageRequest sendMessageRequest)
-          throws BadRequestException {
+      Map<String, Object> context, SendMessageRequest sendMessageRequest)
+      throws BadRequestException {
     String channelType =
-            Optional.of(sendMessageRequest)
-                    .map(SendMessageRequest::getContext)
-                    .map(Context::getCommunicationContext)
-                    .map(CommunicationContext::getChannel)
-                    .map(Channel::getChannelType)
-                    .map(String::trim)
-                    .filter(currChannelType -> !currChannelType.isEmpty())
-                    .orElseThrow(
-                            () ->
-                                    new BadRequestException(
-                                            "Communication Context - Channel Type is null or empty",
-                                            new Exception(),
-                                            ErrorCode.INVALID_PAYLOAD));
+        Optional.of(sendMessageRequest)
+            .map(SendMessageRequest::getContext)
+            .map(Context::getCommunicationContext)
+            .map(CommunicationContext::getChannel)
+            .map(Channel::getChannelType)
+            .map(String::trim)
+            .filter(currChannelType -> !currChannelType.isEmpty())
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        "Communication Context - Channel Type is null or empty",
+                        new Exception(),
+                        ErrorCode.INVALID_PAYLOAD));
     String channelSubtype =
-            Optional.of(sendMessageRequest)
-                    .map(SendMessageRequest::getContext)
-                    .map(Context::getCommunicationContext)
-                    .map(CommunicationContext::getChannel)
-                    .map(Channel::getChannelSubtype)
-                    .map(String::trim)
-                    .filter(currChannelSubtype -> !currChannelSubtype.isEmpty())
-                    .orElseThrow(
-                            () ->
-                                    new BadRequestException(
-                                            "Communication Context - Channel Subtype is null or empty",
-                                            new Exception(),
-                                            ErrorCode.INVALID_PAYLOAD));
+        Optional.of(sendMessageRequest)
+            .map(SendMessageRequest::getContext)
+            .map(Context::getCommunicationContext)
+            .map(CommunicationContext::getChannel)
+            .map(Channel::getChannelSubtype)
+            .map(String::trim)
+            .filter(currChannelSubtype -> !currChannelSubtype.isEmpty())
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        "Communication Context - Channel Subtype is null or empty",
+                        new Exception(),
+                        ErrorCode.INVALID_PAYLOAD));
     context.put("communication_context", createCommunicationContext(channelType, channelSubtype));
   }
 
   private static Map<String, Object> createCommunicationContext(
-          String channelType, String channelSubtype) {
+      String channelType, String channelSubtype) {
     Map<String, Object> channel = new HashMap<>(COMMUNICATION_CONTEXT_CHANNEL_CAPACITY);
     channel.put("channel_type", channelType);
     channel.put("channel_subtype", channelSubtype);

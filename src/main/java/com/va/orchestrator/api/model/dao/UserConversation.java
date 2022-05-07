@@ -9,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Entity
 @Getter
 @Setter

@@ -10,7 +10,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Component
 public class OperationFactory {
 

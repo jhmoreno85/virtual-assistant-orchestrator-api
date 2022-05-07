@@ -5,17 +5,17 @@ package com.va.orchestrator.api.util;
  */
 public class CallCounterStrategy {
 
-    private int maxNumberOfCalls;
+  private int maxNumberOfCalls;
 
-    public CallCounterStrategy(int maxNumberOfCalls) {
-        this.maxNumberOfCalls = maxNumberOfCalls;
-    }
+  public CallCounterStrategy(int maxNumberOfCalls) {
+    this.maxNumberOfCalls = maxNumberOfCalls;
+  }
 
-    public boolean shouldCall() {
-        return 0 < --this.maxNumberOfCalls;
-    }
+  public boolean shouldCall() {
+    return 0 < --this.maxNumberOfCalls;
+  }
 
-    public void increaseCounter() {
-        this.maxNumberOfCalls--;
-    }
+  public void increaseCounter() {
+    this.maxNumberOfCalls--;
+  }
 }

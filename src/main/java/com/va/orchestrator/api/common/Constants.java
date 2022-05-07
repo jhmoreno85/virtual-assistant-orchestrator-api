@@ -1,6 +1,8 @@
 package com.va.orchestrator.api.common;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public final class Constants {
 
   private Constants() {

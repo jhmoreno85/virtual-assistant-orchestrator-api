@@ -30,7 +30,9 @@ import static com.va.orchestrator.api.util.ContextUtil.getOperation;
 import static com.va.orchestrator.api.util.ContextUtil.populateCommunicationContext;
 import static com.va.orchestrator.api.util.EventFlowUtil.createSendMessageResponse;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Slf4j
 @Service
 public class EventFlowServiceImpl implements EventFlowService {

@@ -10,7 +10,9 @@ import lombok.ToString;
 
 import java.util.List;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Getter
 @Setter
 @ToString

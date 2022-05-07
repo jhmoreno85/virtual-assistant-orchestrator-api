@@ -8,8 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = "classpath:application.yml")
 public class VirtualAssistantOrchestratorApiApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(VirtualAssistantOrchestratorApiApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(VirtualAssistantOrchestratorApiApplication.class, args);
+  }
 }

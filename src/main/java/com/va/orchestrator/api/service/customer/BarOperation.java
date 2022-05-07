@@ -17,7 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 @Slf4j
 @Component
 public class BarOperation implements Operation {
@@ -32,7 +34,8 @@ public class BarOperation implements Operation {
   public Map<String, Object> fireOperation(Map<String, Object> map) {
     log.info("Executing {}, fireOperation method", this.getClass().getSimpleName());
 
-    HttpUrl httpUrl = new HttpUrl.Builder()
+    HttpUrl httpUrl =
+        new HttpUrl.Builder()
             .scheme("https")
             .host("jsonplaceholder.typicode.com")
             .port(443)

@@ -7,7 +7,9 @@ import com.va.orchestrator.api.model.sendmessage.Input;
 import com.va.orchestrator.api.model.sendmessage.Output;
 import com.va.orchestrator.api.model.sendmessage.SendMessageResponse;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public class EventFlowUtil {
 
   private EventFlowUtil() {

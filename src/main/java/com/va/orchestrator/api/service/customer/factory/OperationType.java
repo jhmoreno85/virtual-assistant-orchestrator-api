@@ -2,7 +2,9 @@ package com.va.orchestrator.api.service.customer.factory;
 
 import java.util.Arrays;
 
-/** @author huerta.jorge at gmail.com */
+/**
+ * @author huerta.jorge at gmail.com
+ */
 public enum OperationType {
   FOO_OPERATION("foo_operation"),
   BAR_OPERATION("bar_operation"),
