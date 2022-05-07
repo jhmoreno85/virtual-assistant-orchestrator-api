@@ -59,7 +59,7 @@ public class WatsonAssistantServiceImpl implements WatsonAssistantService {
   }
 
   @Override
-  public MessageResponse message(String conversationId, Map<String, Object> contextMap, String text)
+  public MessageResponse message(Map<String, Object> contextMap, String conversationId, String text)
       throws ApplicationException {
     Context context = new Context();
     context.setConversationId(conversationId);

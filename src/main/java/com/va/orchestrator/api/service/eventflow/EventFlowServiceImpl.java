@@ -88,7 +88,7 @@ public class EventFlowServiceImpl implements EventFlowService {
     CallCounterStrategy callCounterStrategy = new CallCounterStrategy(MAX_NUMBER_OF_CALLS);
     do {
       messageResponse =
-          watsonAssistantService.message(conversationId, context, inputTextWithoutPii);
+          watsonAssistantService.message(context, conversationId, inputTextWithoutPii);
       conversationalDatabaseService.saveOrUpdateContext(messageResponse);
       operationField = getOperation(messageResponse.getContext().getProperties());
       if (operationField.isPresent()) {

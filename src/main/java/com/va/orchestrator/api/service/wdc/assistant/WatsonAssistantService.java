@@ -10,6 +10,6 @@ import java.util.Map;
  * @author huerta.jorge at gmail.com
  */
 public interface WatsonAssistantService {
-  MessageResponse message(String conversationId, Map<String, Object> context, String text)
+  MessageResponse message(Map<String, Object> context, String conversationId, String text)
       throws ApplicationException;
 }
