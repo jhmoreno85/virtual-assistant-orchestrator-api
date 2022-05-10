@@ -49,7 +49,7 @@ public class ContextUtil {
 
   public static <T> Optional<T> getTargetObjectFromMap(
       Map<String, Object> map, String targetPath, Class<T> clazz) {
-    if (null == targetPath || targetPath.isEmpty() || null == map || map.isEmpty()) {
+    if (null == targetPath || targetPath.isEmpty()) {
       return Optional.empty();
     }
     return Optional.ofNullable(clazz.cast(getTargetObjectFromMap(map, targetPath.split("\\."), 0)));
