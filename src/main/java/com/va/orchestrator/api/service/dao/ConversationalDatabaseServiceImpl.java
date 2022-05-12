@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.va.orchestrator.api.common.Constants.ENTITIES_MAX_SIZE;
+import static com.va.orchestrator.api.common.Constants.INTENTS_MAX_SIZE;
 import static com.va.orchestrator.api.common.Constants.JOINING_DELIMITER;
-import static com.va.orchestrator.api.common.Constants.LIMIT_ENTITIES;
-import static com.va.orchestrator.api.common.Constants.LIMIT_INTENTS;
 import static com.va.orchestrator.api.util.ContextUtil.jsonStringToMap;
 import static com.va.orchestrator.api.util.ContextUtil.mapToJsonString;
 
@@ -98,12 +98,12 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
     userConversationDetailed.setConfidence(messageResponse.getIntents().get(0).confidence());
     userConversationDetailed.setIntents(
         messageResponse.getIntents().stream()
-            .limit(LIMIT_INTENTS)
+            .limit(INTENTS_MAX_SIZE)
             .map(runtimeIntent -> runtimeIntent.intent() + ":" + runtimeIntent.confidence())
             .collect(Collectors.joining(JOINING_DELIMITER)));
     userConversationDetailed.setEntities(
         messageResponse.getEntities().stream()
-            .limit(LIMIT_ENTITIES)
+            .limit(ENTITIES_MAX_SIZE)
             .map(runtimeEntity -> runtimeEntity.entity() + ":" + runtimeEntity.confidence())
             .collect(Collectors.joining(JOINING_DELIMITER)));
     userConversationDetailed.setTransTs(new Date());

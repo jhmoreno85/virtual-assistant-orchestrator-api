@@ -11,7 +11,7 @@ public final class Constants {
 
   public static final String EMPTY = "";
   public static final String JOINING_DELIMITER = "|";
-  public static final long LIMIT_INTENTS = 3L;
-  public static final long LIMIT_ENTITIES = 3L;
+  public static final long INTENTS_MAX_SIZE = 3L;
+  public static final long ENTITIES_MAX_SIZE = 3L;
   public static final int MAX_NUMBER_OF_CALLS = 5;
 }
