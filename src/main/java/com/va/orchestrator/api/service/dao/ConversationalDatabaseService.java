@@ -9,7 +9,7 @@ import java.util.Map;
  * @author huerta.jorge at gmail.com
  */
 public interface ConversationalDatabaseService {
-  void saveOrUpdateContext(MessageResponse messageResponse);
+  void upsertContext(MessageResponse messageResponse);
 
   Map<String, Object> findContextByConversationId(String conversationId) throws BadRequestException;
 

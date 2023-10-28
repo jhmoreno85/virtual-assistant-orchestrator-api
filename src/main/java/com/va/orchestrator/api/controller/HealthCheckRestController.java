@@ -24,6 +24,8 @@ public class HealthCheckRestController {
       produces = {MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<HealthCheckResponse> ping() {
     log.info("Inside of [ping]");
-    return new ResponseEntity<>(new HealthCheckResponse("success"), HttpStatus.OK);
+    return new ResponseEntity<>(HealthCheckResponse.builder()
+            .status("success")
+            .build(), HttpStatus.OK);
   }
 }

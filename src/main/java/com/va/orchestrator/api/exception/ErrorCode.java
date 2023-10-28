@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 /**
  * @author huerta.jorge at gmail.com
  */
+@Getter
 public enum ErrorCode {
   INVALID_PAYLOAD(100, HttpStatus.BAD_REQUEST.value(), "Invalid payload"),
   JSON_CONVERSION_ERROR(
@@ -15,9 +16,9 @@ public enum ErrorCode {
   COMMAND_NOT_FOUND_ERROR(120, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Command not found"),
   UNDEFINED_ERROR(-1, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Undefined error");
 
-  @Getter private final int code;
-  @Getter private final int httpStatus;
-  @Getter private final String description;
+  private final int code;
+  private final int httpStatus;
+  private final String description;
 
   ErrorCode(int code, int httpStatus, String description) {
     this.code = code;

@@ -31,8 +31,7 @@ public class OperationFactory {
   public Operation getOperation(OperationType operationType) throws ApplicationException {
     Operation operation = operations.get(operationType);
     if (null == operation) {
-      throw new ApplicationException(
-          "Operation not defined", new Exception(), ErrorCode.COMMAND_NOT_FOUND_ERROR);
+      throw new ApplicationException("Operation not defined", new Exception(), ErrorCode.COMMAND_NOT_FOUND_ERROR);
     }
     return operation;
   }

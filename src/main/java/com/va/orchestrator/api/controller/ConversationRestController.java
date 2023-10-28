@@ -42,12 +42,16 @@ public class ConversationRestController {
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (BadRequestException e) {
       log.error("An error has occurred: ", e);
-      ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode().getCode(), e.getMessage());
-      return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(ErrorResponse.builder()
+              .code(e.getErrorCode().getCode())
+              .error(e.getMessage())
+              .build(), HttpStatus.BAD_REQUEST);
     } catch (ApplicationException e) {
       log.error("An error has occurred: ", e);
-      ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode().getCode(), e.getMessage());
-      return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ErrorResponse.builder()
+              .code(e.getErrorCode().getCode())
+              .error(e.getMessage())
+              .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

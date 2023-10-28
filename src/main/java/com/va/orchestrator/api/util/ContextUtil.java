@@ -20,10 +20,7 @@ import java.util.Optional;
 public class ContextUtil {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private static final int COMMUNICATION_CONTEXT_CAPACITY = 1;
-  private static final int COMMUNICATION_CONTEXT_CHANNEL_CAPACITY = 2;
-  private static final String TRANSACTION_CONTEXT_OPERATION_PATH =
-      "transaction_context.request.operation";
+  private static final String TRANSACTION_CONTEXT_OPERATION_PATH = "transaction_context.request.operation";
   private static final String REGEX_ARRAY_BRACKETS = "^\\[\\d+]?";
 
   private ContextUtil() {
@@ -46,8 +43,7 @@ public class ContextUtil {
     }
   }
 
-  public static <T> Optional<T> getTargetObjectFromMap(
-      Map<String, Object> map, String targetPath, Class<T> clazz) {
+  public static <T> Optional<T> getTargetObjectFromMap(Map<String, Object> map, String targetPath, Class<T> clazz) {
     if (null == targetPath || targetPath.isEmpty()) {
       return Optional.empty();
     }
@@ -65,52 +61,39 @@ public class ContextUtil {
       }
     } else if (object instanceof List && targetPath[currIndex].matches(REGEX_ARRAY_BRACKETS)) {
       List<Object> list = (List<Object>) object;
-      int elementIndex =
-          Integer.parseInt(targetPath[currIndex].substring(1, targetPath[currIndex].length() - 1));
+      int elementIndex = Integer.parseInt(targetPath[currIndex].substring(1, targetPath[currIndex].length() - 1));
       if (elementIndex < list.size()) {
-        return currIndex == targetPath.length - 1
-            ? list.get(elementIndex)
-            : getTargetObjectFromMap(list.get(elementIndex), targetPath, currIndex + 1);
+        return currIndex == targetPath.length - 1 ?
+                list.get(elementIndex) :
+                getTargetObjectFromMap(list.get(elementIndex), targetPath, currIndex + 1);
       }
     }
     return null;
   }
 
-  public static void populateCommunicationContext(
-      Map<String, Object> context, SendMessageRequest sendMessageRequest)
-      throws BadRequestException {
-    String[] channelTypeAndSubtype =
-        Optional.ofNullable(sendMessageRequest)
+  public static void populateCommunicationContext(Map<String, Object> context, SendMessageRequest sendMessageRequest) throws BadRequestException {
+    String[] channelTypeAndSubtype = Optional.ofNullable(sendMessageRequest)
             .map(SendMessageRequest::getContext)
             .map(Context::getCommunicationContext)
             .map(CommunicationContext::getChannel)
             .filter(ch -> null != ch.getChannelType() && null != ch.getChannelSubtype())
-            .map(
-                ch -> {
+            .map(ch -> {
                   ch.setChannelType(ch.getChannelType().trim());
                   ch.setChannelSubtype(ch.getChannelSubtype().trim());
                   return ch;
                 })
             .filter(ch -> !ch.getChannelType().isEmpty() && !ch.getChannelSubtype().isEmpty())
             .map(ch -> new String[] {ch.getChannelType(), ch.getChannelSubtype()})
-            .orElseThrow(
-                () ->
-                    new BadRequestException(
-                        "Communication Context - Channel Type/Subtype is null or empty",
-                        new Exception(),
-                        ErrorCode.INVALID_PAYLOAD));
-    context.put(
-        "communication_context",
-        createCommunicationContext(channelTypeAndSubtype[0], channelTypeAndSubtype[1]));
+            .orElseThrow(() -> new BadRequestException("Communication Context - Channel Type/Subtype is null or empty", new Exception(), ErrorCode.INVALID_PAYLOAD));
+    context.put("communication_context", createCommunicationContext(channelTypeAndSubtype[0], channelTypeAndSubtype[1]));
   }
 
-  private static Map<String, Object> createCommunicationContext(
-      String channelType, String channelSubtype) {
-    Map<String, Object> channel = new HashMap<>(COMMUNICATION_CONTEXT_CHANNEL_CAPACITY);
+  private static Map<String, Object> createCommunicationContext(String channelType, String channelSubtype) {
+    Map<String, Object> channel = new HashMap<>();
     channel.put("channel_type", channelType);
     channel.put("channel_subtype", channelSubtype);
 
-    Map<String, Object> communicationContext = new HashMap<>(COMMUNICATION_CONTEXT_CAPACITY);
+    Map<String, Object> communicationContext = new HashMap<>();
     communicationContext.put("channel", channel);
     return communicationContext;
   }

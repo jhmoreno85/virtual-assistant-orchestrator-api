@@ -44,7 +44,7 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
   }
 
   @Override
-  public void saveOrUpdateContext(MessageResponse messageResponse) {
+  public void upsertContext(MessageResponse messageResponse) {
     log.info(
         "Saving conversation context, conversationId={}",
         messageResponse.getContext().getConversationId());
@@ -55,10 +55,11 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
       userConversation = userConversationOptional.get();
       userConversation.setContext(mapToJsonString(messageResponse.getContext().getProperties()));
     } else {
-      userConversation = new UserConversation();
-      userConversation.setConversationId(messageResponse.getContext().getConversationId());
-      userConversation.setContext(mapToJsonString(messageResponse.getContext().getProperties()));
-      userConversation.setStartTs(new Date());
+      userConversation = UserConversation.builder()
+              .conversationId(messageResponse.getContext().getConversationId())
+              .context(mapToJsonString(messageResponse.getContext().getProperties()))
+              .startTs(new Date())
+              .build();
     }
     long start = System.currentTimeMillis();
     userConversationRepository.save(userConversation);
@@ -67,19 +68,16 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
   }
 
   @Override
-  public Map<String, Object> findContextByConversationId(String conversationId)
-      throws BadRequestException {
+  public Map<String, Object> findContextByConversationId(String conversationId) throws BadRequestException {
     log.info("Getting conversation context, conversationId={}", conversationId);
     long start = System.currentTimeMillis();
-    Optional<UserConversation> userConversationOptional =
-        userConversationRepository.findById(conversationId);
+    Optional<UserConversation> userConversationOptional = userConversationRepository.findById(conversationId);
     long elapsedTime = System.currentTimeMillis() - start;
     if (userConversationOptional.isPresent()) {
       log.info("Conversation context retrieved successful, {} ms", elapsedTime);
       return jsonStringToMap(userConversationOptional.get().getContext());
     } else {
-      throw new BadRequestException(
-          "ConversationId not found", new Exception(), ErrorCode.INVALID_PAYLOAD);
+      throw new BadRequestException("ConversationId not found", new Exception(), ErrorCode.INVALID_PAYLOAD);
     }
   }
 
@@ -88,26 +86,24 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
     log.info(
         "Saving conversation utterance, conversationId={}",
         messageResponse.getContext().getConversationId());
-    UserConversationDetailed userConversationDetailed = new UserConversationDetailed();
-    userConversationDetailed.setConversationId(messageResponse.getContext().getConversationId());
-    userConversationDetailed.setInputText(messageResponse.getInput().getText());
-    userConversationDetailed.setOutputText(
-        messageResponse.getOutput().getText().stream()
-            .map(String::valueOf)
-            .collect(Collectors.joining(JOINING_DELIMITER)));
-    userConversationDetailed.setConfidence(messageResponse.getIntents().get(0).confidence());
-    userConversationDetailed.setIntents(
-        messageResponse.getIntents().stream()
-            .limit(INTENTS_MAX_SIZE)
-            .map(runtimeIntent -> runtimeIntent.intent() + ":" + runtimeIntent.confidence())
-            .collect(Collectors.joining(JOINING_DELIMITER)));
-    userConversationDetailed.setEntities(
-        messageResponse.getEntities().stream()
-            .limit(ENTITIES_MAX_SIZE)
-            .map(runtimeEntity -> runtimeEntity.entity() + ":" + runtimeEntity.confidence())
-            .collect(Collectors.joining(JOINING_DELIMITER)));
-    userConversationDetailed.setTransTs(new Date());
-    userConversationDetailed.setFeedback(DEFAULT_FEEDBACK_VALUE);
+    UserConversationDetailed userConversationDetailed = UserConversationDetailed.builder()
+            .conversationId(messageResponse.getContext().getConversationId())
+            .inputText(messageResponse.getInput().getText())
+            .outputText(messageResponse.getOutput().getText().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(JOINING_DELIMITER)))
+            .confidence(messageResponse.getIntents().get(0).confidence())
+            .intents(messageResponse.getIntents().stream()
+                    .limit(INTENTS_MAX_SIZE)
+                    .map(runtimeIntent -> runtimeIntent.intent() + ":" + runtimeIntent.confidence())
+                    .collect(Collectors.joining(JOINING_DELIMITER)))
+            .entities(messageResponse.getEntities().stream()
+                    .limit(ENTITIES_MAX_SIZE)
+                    .map(runtimeEntity -> runtimeEntity.entity() + ":" + runtimeEntity.confidence())
+                    .collect(Collectors.joining(JOINING_DELIMITER)))
+            .transactionTs(new Date())
+            .feedback(DEFAULT_FEEDBACK_VALUE)
+            .build();
     long start = System.currentTimeMillis();
     Long rowId = userConversationDetailedRepository.save(userConversationDetailed).getId();
     long elapsedTime = System.currentTimeMillis() - start;
@@ -118,12 +114,10 @@ public class ConversationalDatabaseServiceImpl implements ConversationalDatabase
   @Override
   public void saveFeedback(Long id, String conversationId, String feedback) {
     log.info("Saving feedback, conversationId={}, rowId={}", conversationId, id);
-    userConversationDetailedRepository
-        .findById(id)
+    userConversationDetailedRepository.findById(id)
         .ifPresent(
             userConversationDetailed -> {
-              if (null != conversationId
-                  && conversationId.equals(userConversationDetailed.getConversationId())) {
+              if (null != conversationId && conversationId.equals(userConversationDetailed.getConversationId())) {
                 userConversationDetailed.setFeedback(feedback);
                 long start = System.currentTimeMillis();
                 userConversationDetailedRepository.save(userConversationDetailed);

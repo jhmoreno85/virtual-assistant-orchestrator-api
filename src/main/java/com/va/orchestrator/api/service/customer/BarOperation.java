@@ -24,6 +24,8 @@ import java.util.Map;
 @Component
 public class BarOperation implements Operation {
 
+  private static final String RESPONSE = "response";
+
   private final RestTemplate restTemplate;
 
   public BarOperation(RestTemplateBuilder restTemplateBuilder) {
@@ -42,11 +44,13 @@ public class BarOperation implements Operation {
             .addPathSegment("posts")
             .build();
 
-    ResponseEntity<List<Object>> response =
-        restTemplate.exchange(
-            httpUrl.uri(), HttpMethod.GET, null, new ParameterizedTypeReference<List<Object>>() {});
+    ResponseEntity<List<Object>> response = restTemplate.exchange(
+            httpUrl.uri(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<Object>>() {});
 
-    map.put("response", response.getBody());
+    map.put(RESPONSE, response.getBody());
     return map;
   }
 

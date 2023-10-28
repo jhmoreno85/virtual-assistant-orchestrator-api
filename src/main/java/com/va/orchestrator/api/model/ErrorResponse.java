@@ -1,16 +1,16 @@
 package com.va.orchestrator.api.model;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author huerta.jorge at gmail.com
  */
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class ErrorResponse {
   private int code;

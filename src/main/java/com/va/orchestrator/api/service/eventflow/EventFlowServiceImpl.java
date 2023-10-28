@@ -11,7 +11,6 @@ import com.va.orchestrator.api.model.sendmessage.Input;
 import com.va.orchestrator.api.model.sendmessage.SendMessageRequest;
 import com.va.orchestrator.api.model.sendmessage.SendMessageResponse;
 import com.va.orchestrator.api.service.customer.factory.OperationFactory;
-import com.va.orchestrator.api.service.customer.factory.OperationType;
 import com.va.orchestrator.api.service.dao.ConversationalDatabaseService;
 import com.va.orchestrator.api.service.piiscrubber.PiiScrubberService;
 import com.va.orchestrator.api.service.wdc.assistant.WatsonAssistantService;
@@ -26,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.va.orchestrator.api.common.Constants.MAX_NUMBER_OF_CALLS;
+import static com.va.orchestrator.api.service.customer.factory.OperationType.getOperationType;
 import static com.va.orchestrator.api.util.ContextUtil.getOperation;
 import static com.va.orchestrator.api.util.ContextUtil.populateCommunicationContext;
 import static com.va.orchestrator.api.util.EventFlowUtil.createSendMessageResponse;
@@ -42,11 +42,10 @@ public class EventFlowServiceImpl implements EventFlowService {
   private final WatsonAssistantService watsonAssistantService;
   private final OperationFactory operationFactory;
 
-  public EventFlowServiceImpl(
-      PiiScrubberService piiScrubberService,
-      ConversationalDatabaseService conversationalDatabaseService,
-      WatsonAssistantService watsonAssistantService,
-      OperationFactory operationFactory) {
+  public EventFlowServiceImpl(PiiScrubberService piiScrubberService,
+                              ConversationalDatabaseService conversationalDatabaseService,
+                              WatsonAssistantService watsonAssistantService,
+                              OperationFactory operationFactory) {
     this.piiScrubberService = piiScrubberService;
     this.conversationalDatabaseService = conversationalDatabaseService;
     this.watsonAssistantService = watsonAssistantService;
@@ -54,31 +53,24 @@ public class EventFlowServiceImpl implements EventFlowService {
   }
 
   @Override
-  public SendMessageResponse sendMessage(SendMessageRequest sendMessageRequest)
-      throws BadRequestException, ApplicationException {
-    String inputText =
-        Optional.ofNullable(sendMessageRequest)
+  public SendMessageResponse sendMessage(SendMessageRequest sendMessageRequest) throws BadRequestException, ApplicationException {
+    String inputText = Optional.ofNullable(sendMessageRequest)
             .map(SendMessageRequest::getInput)
             .map(Input::getText)
             .map(String::trim)
             .filter(text -> !text.isEmpty())
-            .orElseThrow(
-                () ->
-                    new BadRequestException(
-                        "Input text is null or empty", new Exception(), ErrorCode.INVALID_PAYLOAD));
+            .orElseThrow(() -> new BadRequestException("Input text is null or empty", new Exception(), ErrorCode.INVALID_PAYLOAD));
 
-    String conversationId =
-        Optional.of(sendMessageRequest)
+    String conversationId = Optional.of(sendMessageRequest)
             .map(SendMessageRequest::getContext)
             .map(Context::getConversationId)
             .map(String::trim)
             .filter(currConversationId -> !currConversationId.isEmpty())
             .orElse(Constants.EMPTY);
 
-    Map<String, Object> context =
-        conversationId.isEmpty()
-            ? new HashMap<>()
-            : conversationalDatabaseService.findContextByConversationId(conversationId);
+    Map<String, Object> context = conversationId.isEmpty() ?
+            new HashMap<>() :
+            conversationalDatabaseService.findContextByConversationId(conversationId);
     populateCommunicationContext(context, sendMessageRequest);
 
     String inputTextWithoutPii = piiScrubberService.sanitizeInputText(inputText);
@@ -87,14 +79,12 @@ public class EventFlowServiceImpl implements EventFlowService {
     Optional<String> operationField;
     CallCounterStrategy callCounterStrategy = new CallCounterStrategy(MAX_NUMBER_OF_CALLS);
     do {
-      messageResponse =
-          watsonAssistantService.message(context, conversationId, inputTextWithoutPii);
-      conversationalDatabaseService.saveOrUpdateContext(messageResponse);
+      messageResponse = watsonAssistantService.message(context, conversationId, inputTextWithoutPii);
+      conversationalDatabaseService.upsertContext(messageResponse);
       operationField = getOperation(messageResponse.getContext().getProperties());
       if (operationField.isPresent()) {
-        context =
-            operationFactory
-                .getOperation(OperationType.getOperationType(operationField.get()))
+        context = operationFactory
+                .getOperation(getOperationType(operationField.get()))
                 .fireOperation(messageResponse.getContext().getProperties());
       }
     } while (operationField.isPresent() && callCounterStrategy.shouldCall());

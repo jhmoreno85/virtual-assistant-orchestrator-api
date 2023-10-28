@@ -16,21 +16,17 @@ public class EventFlowUtil {
     throw new IllegalStateException("EvenFlow Util class");
   }
 
-  public static SendMessageResponse createSendMessageResponse(
-      MessageResponse messageResponse, String inputText) {
-    Input input = new Input();
-    input.setText(inputText);
-
-    Output output = new Output();
-    output.setText(messageResponse.getOutput().getText());
-
-    Context context = new Context();
-    context.setConversationId(messageResponse.getContext().getConversationId());
-
-    SendMessageResponse sendMessageResponse = new SendMessageResponse();
-    sendMessageResponse.setContext(context);
-    sendMessageResponse.setInput(input);
-    sendMessageResponse.setOutput(output);
-    return sendMessageResponse;
+  public static SendMessageResponse createSendMessageResponse(MessageResponse messageResponse, String inputText) {
+    return SendMessageResponse.builder()
+            .context(Context.builder()
+                    .conversationId(messageResponse.getContext().getConversationId())
+                    .build())
+            .input(Input.builder()
+                    .text(inputText)
+                    .build())
+            .output(Output.builder()
+                    .text(messageResponse.getOutput().getText())
+                    .build())
+            .build();
   }
 }
